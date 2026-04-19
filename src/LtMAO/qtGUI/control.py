@@ -3058,7 +3058,7 @@ def build_setting(widget: QWidget):
             
             import requests
             local_file = './LtMAO-hai.zip'
-            remote_file = 'https://codeload.github.com/tarngaina/LtMAO/zip/refs/heads/hai'
+            remote_file = 'https://codeload.github.com/panlabu/LtMAO/zip/refs/heads/hai'
             # GET request
             get = requests.get(remote_file, stream=True)
             get.raise_for_status()
@@ -3095,13 +3095,6 @@ def build_setting(widget: QWidget):
 
         helper.SafeThread.start('update_ltmao', redownload_thrd)
     button.clicked.connect(redownload_ltmao)
-    layout2.addWidget(button)
-    button = QToolButton()
-    button.setText('🤝 Support me')
-    def support_cmd():
-        import webbrowser
-        webbrowser.open('https://paypal.me/tarngaina')
-    button.clicked.connect(support_cmd)
     layout2.addWidget(button)
     layout2.addStretch()
     layout.addLayout(layout2)

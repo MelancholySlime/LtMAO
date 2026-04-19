@@ -24,7 +24,7 @@ def ensure_pythonpaths():
             sys.path.append(pythonpath)
     # extra: set some global values 
     global AUTHOR, VERSION
-    AUTHOR = 'tarngaina'
+    AUTHOR = 'panlabu'
     version_file = ltmao_dir+'/version'
     try: 
         with open(version_file, 'r', encoding='utf-8') as f:

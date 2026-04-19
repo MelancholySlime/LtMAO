@@ -1,7 +1,7 @@
 from . import lepath, tools, pyRitoFile, hash_helper
 
 import os, os.path, time, io, json
-from natsort import os_sorted
+from natsort_rs import natsort
 from shutil import rmtree
 import pyaudio, wave, audioop
 
@@ -272,15 +272,15 @@ class BankHelper:
             for container_id in bank_event.containers:
                 bank_container = bank_event.containers[container_id]
                 # sort wems inside container
-                bank_container.wems = dict(os_sorted(bank_container.wems.items()))
+                bank_container.wems = dict(natsort(bank_container.wems.items()))
             # sort containers inside event
-            bank_event.containers = dict(os_sorted(bank_event.containers.items()))
+            bank_event.containers = dict(natsort(bank_event.containers.items()))
             # sort wems inside event
-            bank_event.wems = dict(os_sorted(bank_event.wems.items()))
+            bank_event.wems = dict(natsort(bank_event.wems.items()))
         # sort events inside tree
-        bank_tree.events = dict(os_sorted(bank_tree.events.items()))
+        bank_tree.events = dict(natsort(bank_tree.events.items()))
         # sort wems inside tree
-        bank_tree.wems = dict(os_sorted(bank_tree.wems.items()))
+        bank_tree.wems = dict(natsort(bank_tree.wems.items()))
 
 class Inspector:
     cache_dir = './pref/bnk_tool'

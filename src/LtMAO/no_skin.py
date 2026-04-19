@@ -11,7 +11,7 @@ skips_file = f'{local_dir}/SKIPS.json'
 SKIPS = {}
 FANTOME_META = {
     'Name': 'NO SKIN',
-    'Author': 'tarngaina',
+    'Author': 'panlabu',
     'Version': '1.0',
     'Description': ''
 }

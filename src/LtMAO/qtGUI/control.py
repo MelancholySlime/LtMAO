@@ -255,6 +255,7 @@ def build_cslmao(widget: QWidget):
     scrollarea = QScrollArea()
     scrollarea.setWidgetResizable(True)
     view_widget = QWidget()
+    view_widget.setObjectName('Round')
     view_layout = QGridLayout(scrollarea)
     view_layout.setContentsMargins(0, 0, 0, 0)
     view_widget.setLayout(view_layout)
@@ -498,6 +499,7 @@ def build_cslmao(widget: QWidget):
     # edit layout
     edit_layout = QHBoxLayout()
     edit_widget = QWidget()
+    edit_widget.setObjectName('Round')
     edit_widget.setLayout(edit_layout)
     edit_widget.setVisible(False)
     layout.addWidget(edit_widget)
@@ -1412,6 +1414,7 @@ def build_bumpath(widget: QWidget):
     layout4.addWidget(dir_button)
     # dir layout
     dir_widget = QWidget()
+    dir_widget.setObjectName('Round')
     dir_scrollarea = QScrollArea()
     dir_scrollarea.setWidget(dir_widget)
     dir_scrollarea.setWidgetResizable(True)
@@ -1440,6 +1443,7 @@ def build_bumpath(widget: QWidget):
     layout5.addLayout(layout8)
     # bin layout
     bin_widget = QWidget()
+    bin_widget.setObjectName('Round')
     bin_scrollarea = QScrollArea()
     bin_scrollarea.setWidget(bin_widget)
     bin_scrollarea.setWidgetResizable(True)
@@ -3057,8 +3061,8 @@ def build_setting(widget: QWidget):
                 return str(size >> ((max(size.bit_length()-1, 0)//10)*10)) + ["", " KB", " MB", " GB", " TB", " PB", " EB"][max(size.bit_length()-1, 0)//10]
             
             import requests
-            local_file = './LtMAO-hai.zip'
-            remote_file = 'https://codeload.github.com/panlabu/LtMAO/zip/refs/heads/hai'
+            local_file = './LtMAO-pan.zip'
+            remote_file = 'https://codeload.github.com/panlabu/LtMAO/zip/refs/heads/pan'
             # GET request
             get = requests.get(remote_file, stream=True)
             get.raise_for_status()
@@ -3082,7 +3086,7 @@ def build_setting(widget: QWidget):
             import zipfile
             with zipfile.ZipFile(local_file, 'r') as zip:
                 for zipinfo in zip.infolist():
-                    zipinfo.filename = zipinfo.filename.replace('LtMAO-hai/', '')
+                    zipinfo.filename = zipinfo.filename.replace('LtMAO-pan/', '')
                     try:
                         zip.extract(zipinfo, '.')
                     except Exception as e:

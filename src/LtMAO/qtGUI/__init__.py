@@ -73,13 +73,17 @@ def init_theme(theme_name):
     # stylesheets
     qtwidgets.window_stylesheet = f"""
         QWidget {{
-            background-color: rgba(0, 0, 0, 127);        
+            background-color: rgba(0, 0, 0, 127);    
         }}  
+        QWidget#Round {{
+            border-radius: 8;
+        }}
         QLabel {{
             background-color: transparent;
         }}  
         QScrollBar:handle {{
             background-color: {qtwidgets.accent_color}; 
+            border-radius: 3;
         }}
         QScrollArea {{
             border: none;
@@ -88,6 +92,7 @@ def init_theme(theme_name):
         QToolButton {{
             min-height: 30;
             border-bottom: 2px solid {qtwidgets.accent_color};
+            border-radius: 8;
         }}
         QToolButton:hover {{ 
             background-color: {qtwidgets.accent_color}; 
@@ -97,6 +102,7 @@ def init_theme(theme_name):
         }}
         QCheckBox {{
             min-height: 30;
+            border-radius: 8;
         }}
         QCheckBox:hover {{
             border-bottom-color: {qtwidgets.accent_color};  
@@ -104,21 +110,30 @@ def init_theme(theme_name):
         QLineEdit {{
             min-height: 30;
             selection-background-color: {qtwidgets.accent_color};
+            border-radius: 8;
         }}
         QLineEdit:focus {{
             border-color: {qtwidgets.accent_color};  
         }}
         QPlainTextEdit {{
             selection-background-color: {qtwidgets.accent_color};
+            border-radius: 8;
         }}
         QPlainTextEdit:focus {{
             border-color: {qtwidgets.accent_color};  
+        }}
+        QComboBox {{
+            border-radius: 8;
         }}
         QComboBox:hover, QComboBox:selected, QComboBox:on {{
             border-color: {qtwidgets.accent_color};
         }}
         QComboBox QAbstractItemView {{
             border-color: {qtwidgets.accent_color};
+            border-radius: 8;
+        }}
+        QComboBox QAbstractItemView:item {{
+            border-radius: 8;
         }}
         QComboBox QAbstractItemView:item:hover, QComboBox QAbstractItemView:item:selected {{
             background-color: {qtwidgets.accent_color};    
@@ -133,6 +148,7 @@ def init_theme(theme_name):
             min-height: 30;
             min-width: 120;
             background-color: rgba(0, 0, 0, 127);        
+            border-radius: 8;
         }}
         QTabBar:tab:selected {{
             color: #ffffff;
@@ -144,6 +160,7 @@ def init_theme(theme_name):
         }}
         QTableView {{
             selection-background-color: {qtwidgets.accent_color};
+            border-radius: 8;
         }}
         QHeaderView:section {{
             background-color: transparent;
@@ -154,6 +171,9 @@ def init_theme(theme_name):
         QHeaderView:section:checked {{
             color: #ffffff;
             background-color: {qtwidgets.accent_color};
+        }}
+        QTreeView {{
+            border-radius: 8;
         }}
         QTreeView:item:selected  {{
             background-color: {qtwidgets.accent_color};
@@ -185,15 +205,22 @@ def init_theme(theme_name):
             background-color: rgb(255, 0, 0);
             border-bottom: 2px solid {qtwidgets.accent_color};
         }}
+        QStatusBar {{
+            border-radius: 8;
+        }}
     """
     qtwidgets.tab_stylesheet = f"""
         QWidget {{
             background-color: transparent;
         }}     
+        QWidget#Round {{
+            border-radius: 8;
+        }}
         QToolButton {{
             min-height: 30;
             background-color: rgba(0, 0, 0, 127);
             border-bottom: 2px solid {qtwidgets.accent_color};
+            border-radius: 8;
         }}
         QLabel {{
             background-color: transparent;
@@ -201,9 +228,11 @@ def init_theme(theme_name):
         QLineEdit {{
             min-height: 30;
             background-color: rgba(0, 0, 0, 127);
+            border-radius: 8;
         }}
         QPlainTextEdit {{
             background-color: rgba(0, 0, 0, 127);
+            border-radius: 8;
         }}
         QToolButton:hover {{ 
             background-color: {qtwidgets.accent_color}; 
@@ -213,16 +242,19 @@ def init_theme(theme_name):
         }}
         QTabBar::tab {{
             border-bottom: 2px solid {qtwidgets.accent_color};
+            border-radius: 8;
         }}
         QComboBox {{
             background-color: rgba(0, 0, 0, 127);
+            border-radius: 8;
         }}
         QComboBox QAbstractItemView {{
             background-color: rgba(0, 0, 0, 255);
+            border-radius: 8;
         }}
     """
-    qtwidgets.mod_enable_stylesheet = f'QWidget#CslmaoModWidgetEnable {{ border: 2px solid {qtwidgets.accent_color}; }} QLabel#CslmaoModWidgetEnable {{ background-color: {qtwidgets.accent_color}; }}'
-    qtwidgets.mod_disable_stylesheet = f'QWidget#CslmaoModWidgetDisable {{ border: 2px solid rgb(0, 0, 0); }} QLabel#CslmaoModWidgetDisable {{ background-color: rgb(0, 0, 0); }}'
+    qtwidgets.mod_enable_stylesheet = f'QWidget#CslmaoModWidgetEnable {{ border: 2px solid {qtwidgets.accent_color}; border-radius: 5; }} QLabel#CslmaoModWidgetEnable {{ background-color: {qtwidgets.accent_color}; border-radius: 5; }}'
+    qtwidgets.mod_disable_stylesheet = f'QWidget#CslmaoModWidgetDisable {{ border: 2px solid rgb(0, 0, 0); border-radius: 5; }} QLabel#CslmaoModWidgetDisable {{ background-color: rgb(0, 0, 0); border-radius: 5; }}'
     return theme_paths
 
 def check_version(label):
@@ -231,10 +263,10 @@ def check_version(label):
         local_file = './version'
         with open(local_file, 'r', encoding='utf-8') as f:
             VERSION = f.read()
-        title = f'LtMAO-hai V{VERSION}'
+        title = f'LtMAO-pan V{VERSION}'
         label.setText(title)
         # read online
-        remote_file = 'https://raw.githubusercontent.com/panlabu/LtMAO/hai/version'
+        remote_file = 'https://raw.githubusercontent.com/panlabu/LtMAO/pan/version'
         get = requests.get(remote_file)
         get.raise_for_status()
         NEW_VERSION = get.text
@@ -250,7 +282,7 @@ def sync_changelog(changelog):
     local_file = './pref/changelog.txt'
     try:
         # read online
-        url=f'https://api.github.com/repos/panlabu/ltmao/commits?sha=hai&per_page=100'
+        url=f'https://api.github.com/repos/panlabu/ltmao/commits?sha=pan&per_page=100'
         commits=requests.get(url).json()
         for commit in commits:
             commit = commit['commit']
@@ -342,7 +374,7 @@ def build_splash_screen(splash: QSplashScreen):
     print('qtGUI: Finish: Build splash screen.')
 
 def build_main_window(window: QMainWindow):
-    geometry = setting.get('qtGUI.geometry', [0, 0, 1280, 720])
+    geometry = setting.get('qtGUI.geometry', [0, 0, 1280, 800])
     window.setGeometry(*geometry)
     window.setWindowIcon(QPixmap(qtwidgets.theme_paths['appicon']))
     window.setWindowFlags(Qt.Window|Qt.FramelessWindowHint|Qt.WindowMinMaxButtonsHint)
@@ -501,19 +533,22 @@ def build_main_layout(widget: QWidget, layout: QBoxLayout):
     print('qtGUI: Finish: Build main layout.')
 
 def build_title_bar(widget: QWidget, layout: QBoxLayout):
-    widget.setFixedHeight(40)
+    # wrap everything in another widget, layout
+    title_layout = QHBoxLayout()
+    title_layout.setContentsMargins(0, 0, 0, 0)
+    title_widget = QWidget()
+    title_widget.setLayout(title_layout)
     layout.setContentsMargins(0, 0, 0, 0)
-    layout.setSpacing(0)
+    layout.addWidget(title_widget)
 
     # icon
     pixmap = QPixmap(qtwidgets.theme_paths['titlebaricon']).scaled(118, 40, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.SmoothTransformation)
     qtwidgets.icon_label = icon_label = QLabel(pixmap=pixmap)
-    layout.addWidget(icon_label, stretch=3)
+    title_layout.addWidget(icon_label, stretch=3)
 
     # icon
-    qtwidgets.title_label = title_label = QLabel('LtMAO-hai')
-    title_label.setStyleSheet('background-color: rgba(0, 0, 0, 127)')
-    layout.addWidget(title_label, stretch=100)
+    qtwidgets.title_label = title_label = QLabel('LtMAO-pan')
+    title_layout.addWidget(title_label, stretch=100)
 
     # buttons
     # tray
@@ -522,7 +557,7 @@ def build_title_bar(widget: QWidget, layout: QBoxLayout):
     tray_button = QToolButton()
     tray_button.setText('🟣 Tray')
     tray_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-    layout.addWidget(tray_button, stretch=3)
+    title_layout.addWidget(tray_button, stretch=3)
     def show_tray_cmd(reason):
         if reason == QSystemTrayIcon.ActivationReason.Trigger:
             qtwidgets.main_window.show()
@@ -543,51 +578,51 @@ def build_title_bar(widget: QWidget, layout: QBoxLayout):
             qtwidgets.main_window.remember_maximized_state = True
         qtwidgets.main_window.showMinimized()
     min_button.clicked.connect(min_button_cmd)
-    layout.addWidget(min_button, stretch=3)
+    title_layout.addWidget(min_button, stretch=3)
     # nor
     qtwidgets.nor_button = nor_button = QToolButton()
     nor_button.setText('🟡 Restore')
     nor_button.setVisible(False)
     nor_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
     nor_button.clicked.connect(qtwidgets.main_window.showNormal)
-    layout.addWidget(nor_button, stretch=3)
+    title_layout.addWidget(nor_button, stretch=3)
     # max
     qtwidgets.max_button = max_button = QToolButton()
     max_button.setText('🔵 Maximize')
     max_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
     max_button.clicked.connect(qtwidgets.main_window.showMaximized)
-    layout.addWidget(max_button, stretch=3)
+    title_layout.addWidget(max_button, stretch=3)
     # close
     close_button = QToolButton()
     close_button.setText('🔴 Close')
     close_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
     close_button.clicked.connect(qtwidgets.app.quit)
-    layout.addWidget(close_button, stretch=3)
+    title_layout.addWidget(close_button, stretch=3)
 
     # events
     def mousePressEvent(event):
         if event.button() == Qt.MouseButton.LeftButton:
-            widget.initial_pos = event.position().toPoint()
+            title_widget.initial_pos = event.position().toPoint()
         event.accept()
-    widget.mousePressEvent = mousePressEvent
+    title_widget.mousePressEvent = mousePressEvent
     
     def mouseMoveEvent(event):
-        if widget.initial_pos is not None:
-            delta = event.position().toPoint() - widget.initial_pos
-            widget.window().move(
-                widget.window().x() + delta.x(),
-                widget.window().y() + delta.y(),
+        if title_widget.initial_pos is not None:
+            delta = event.position().toPoint() - title_widget.initial_pos
+            title_widget.window().move(
+                title_widget.window().x() + delta.x(),
+                title_widget.window().y() + delta.y(),
             )
         event.accept()
-    widget.mouseMoveEvent = mouseMoveEvent
+    title_widget.mouseMoveEvent = mouseMoveEvent
 
     def mouseReleaseEvent(event):
-        widget.initial_pos = None
+        title_widget.initial_pos = None
         geometry = qtwidgets.main_window.geometry()
         setting.set('qtGUI.geometry', [geometry.x(), geometry.y(), geometry.width(), geometry.height()])
         setting.save()
         event.accept()
-    widget.mouseReleaseEvent = mouseReleaseEvent
+    title_widget.mouseReleaseEvent = mouseReleaseEvent
 
     def mouseDoubleClickEvent(event):
         if qtwidgets.main_window.isMaximized():
@@ -595,7 +630,7 @@ def build_title_bar(widget: QWidget, layout: QBoxLayout):
         else:
             qtwidgets.main_window.showMaximized()
         event.accept()
-    widget.mouseDoubleClickEvent = mouseDoubleClickEvent
+    title_widget.mouseDoubleClickEvent = mouseDoubleClickEvent
 
     print('qtGUI: Finish: Build title bar.')
     
@@ -607,7 +642,6 @@ def build_midcontent(widget: QWidget, layout: QBoxLayout):
     widget = QWidget()
     control_layout = QVBoxLayout()
     control_layout.setContentsMargins(0, 0, 0, 0)
-    control_layout.setSpacing(0)
     widget.setLayout(control_layout)
     layout.addWidget(widget, stretch=1)
     # build controls
@@ -630,9 +664,13 @@ def build_midcontent(widget: QWidget, layout: QBoxLayout):
     print('qtGUI: Finish: Build mid content.')
     
 def build_status_bar(widget: QWidget, layout: QBoxLayout):
-    widget.setFixedHeight(40)
+    # wrap everything in another widget, layout
+    status_layout = QHBoxLayout()
+    status_layout.setContentsMargins(0, 0, 0, 0)
+    status_widget = QWidget()
+    status_widget.setLayout(status_layout)
     layout.setContentsMargins(0, 0, 0, 0)
-    layout.setSpacing(0)
+    layout.addWidget(status_widget)
     
     qtwidgets.statusbar = statusbar = QStatusBar(sizeGripEnabled=False)
     content_widget = QWidget()
@@ -647,7 +685,7 @@ def build_status_bar(widget: QWidget, layout: QBoxLayout):
             control.on_page_id_changed(True, 100)
         event.accept()
     statusbar.mousePressEvent = mousePressEvent
-    layout.addWidget(statusbar, stretch=94)
+    status_layout.addWidget(statusbar, stretch=94)
 
     changelog_button = QToolButton()
     changelog_button.setText('📑 Changelog')
@@ -660,7 +698,7 @@ def build_status_bar(widget: QWidget, layout: QBoxLayout):
     c.content = content_widget
     control.all.append(c)
     changelog_button.clicked.connect(lambda event, page_id=101: control.on_page_id_changed(event, page_id))
-    layout.addWidget(changelog_button, stretch=3)
+    status_layout.addWidget(changelog_button, stretch=3)
 
     setting_button = QToolButton()
     setting_button.setText('⚙️ Setting')
@@ -673,6 +711,6 @@ def build_status_bar(widget: QWidget, layout: QBoxLayout):
     c.content = content_widget
     control.all.append(c)
     setting_button.clicked.connect(lambda event, page_id=102: control.on_page_id_changed(event, page_id))
-    layout.addWidget(setting_button, stretch=3)
+    status_layout.addWidget(setting_button, stretch=3)
 
     print('qtGUI: Finish: Build status bar.')

@@ -50,7 +50,7 @@ from .. import (
 )
 from ..lemon3d import lemon_fbx, lemon_maya
 
-qtwidgets = None
+app = None
 
 class Control: 
     def __init__(self, name, page_id, build_command):
@@ -65,13 +65,13 @@ def on_page_id_changed(event, page_id):
         if c.page_id == page_id:
             c.content.setVisible(True)
             if c.page_id == 100:
-                c.widget.setStyleSheet(f'background-color: {qtwidgets.accent_color};')
+                c.widget.setStyleSheet(f'background-color: {app.accent_color};')
             else:
                 c.widget.setChecked(True)
         else:
             c.content.setVisible(False)
             if c.page_id == 100:
-                c.widget.setStyleSheet(f'QStatusBar {{ background-color: rgba(0, 0, 0, 127) }} QStatusBar:hover {{ background-color: {qtwidgets.accent_color}; }}')
+                c.widget.setStyleSheet(f'QStatusBar {{ background-color: rgba(0, 0, 0, 127) }} QStatusBar:hover {{ background-color: {app.accent_color}; }}')
             else:
                 c.widget.setChecked(False)
 
@@ -283,8 +283,8 @@ def build_cslmao(widget: QWidget):
     bp_checkbox.clicked.connect(bp_checkbox_cmd)
 
     hide_widget = QWidget()
-    hide_widget.setStyleSheet(qtwidgets.tab_stylesheet)
-    qtwidgets.tab_widgets.append(hide_widget)
+    hide_widget.setStyleSheet(app.tab_stylesheet)
+    app.tab_widgets.append(hide_widget)
     hide_widget.setLayout(hide_layout)
     setting_layout.addWidget(hide_widget)
     def show_setting_cmd():
@@ -293,8 +293,8 @@ def build_cslmao(widget: QWidget):
     show_setting_button.clicked.connect(show_setting_cmd)
 
     show_widget = QWidget()
-    show_widget.setStyleSheet(qtwidgets.tab_stylesheet)
-    qtwidgets.tab_widgets.append(show_widget)
+    show_widget.setStyleSheet(app.tab_stylesheet)
+    app.tab_widgets.append(show_widget)
     show_widget.setLayout(show_layout)
     show_widget.setVisible(False)
     setting_layout.addWidget(show_widget)
@@ -320,7 +320,7 @@ def build_cslmao(widget: QWidget):
     new_button.setMinimumWidth(130)
     layout2.addWidget(new_button)
     all_button = QToolButton()
-    qtwidgets.all_mod_enable = True
+    app.all_mod_enable = True
     all_button.setText('🖲️ On/Off All')
     all_button.setMinimumWidth(130)
     layout2.addWidget(all_button)
@@ -364,10 +364,10 @@ def build_cslmao(widget: QWidget):
     view_layout.mod_widgets = {}
     def build_view_layout():
         mods = cslmao.MOD.mods
-        max_column = qtwidgets.max_column
+        max_column = app.max_column
         search = search_line.text().lower()
         profile = setting.get('cslmao.profile', 'all')
-        qtwidgets.view_mods = view_mods = [False] * len(mods)
+        app.view_mods = view_mods = [False] * len(mods)
         # get view mods with search and profile
         for mod_index, mod in enumerate(mods):
             cslmao.get_info(mod)
@@ -411,14 +411,14 @@ def build_cslmao(widget: QWidget):
                 def update_enable_state(mod_widget, enable):
                     if enable:
                         mod_widget.setObjectName('CslmaoModWidgetEnable')
-                        mod_widget.setStyleSheet(qtwidgets.mod_enable_stylesheet)
+                        mod_widget.setStyleSheet(app.mod_enable_stylesheet)
                         mod_widget.mod_info.setObjectName('CslmaoModWidgetEnable')
-                        mod_widget.mod_info.setStyleSheet(qtwidgets.mod_enable_stylesheet)
+                        mod_widget.mod_info.setStyleSheet(app.mod_enable_stylesheet)
                     else:
                         mod_widget.setObjectName('CslmaoModWidgetDisable')
-                        mod_widget.setStyleSheet(qtwidgets.mod_disable_stylesheet)
+                        mod_widget.setStyleSheet(app.mod_disable_stylesheet)
                         mod_widget.mod_info.setObjectName('CslmaoModWidgetDisable')
-                        mod_widget.mod_info.setStyleSheet(qtwidgets.mod_disable_stylesheet)
+                        mod_widget.mod_info.setStyleSheet(app.mod_disable_stylesheet)
                 update_enable_state(mod_widget, mod.enable)
                 def enable_cmd(mod, mod_widget):
                     if is_overlay_running():
@@ -572,7 +572,7 @@ def build_cslmao(widget: QWidget):
         
         def build_view_layout(self):
             self.signal.emit()
-    qtwidgets.view_layout_smart = view_layout_smart = ViewLayoutSmart(view_layout)
+    app.view_layout_smart = view_layout_smart = ViewLayoutSmart(view_layout)
     class RunButtonSmart(QObject):
         signal = Signal(str)
 
@@ -582,14 +582,14 @@ def build_cslmao(widget: QWidget):
         
         def setText(self, text):
             self.signal.emit(text)
-    qtwidgets.RunButtonSmart = run_button_smart = RunButtonSmart(run_button)
+    app.RunButtonSmart = run_button_smart = RunButtonSmart(run_button)
     # rebuild layout if size changed
-    qtwidgets.max_column = None
+    app.max_column = None
     def rebuild_layout_resize():
         max_column = view_widget.width() // 270
         max_column = 1 if max_column < 1 else max_column
-        if max_column != qtwidgets.max_column:
-            qtwidgets.max_column = max_column
+        if max_column != app.max_column:
+            app.max_column = max_column
             view_layout_smart.build_view_layout()
     view_widget.resizeEvent = lambda event: rebuild_layout_resize()
 
@@ -759,10 +759,10 @@ def build_cslmao(widget: QWidget):
             return False
 
     # run mods
-    qtwidgets.make_overlay = None
-    qtwidgets.run_overlay = None
+    app.make_overlay = None
+    app.run_overlay = None
     def run_mods():
-        if qtwidgets.make_overlay == None and qtwidgets.run_overlay == None:
+        if app.make_overlay == None and app.run_overlay == None:
             def run_thrd():
                 # bumpath preprocess (optional)
                 if not runBumPathIfEnabled():
@@ -772,35 +772,35 @@ def build_cslmao(widget: QWidget):
                 cslmao.convert_raw_files_before_run()
                 # run
                 profile = setting.get('Cslmao.profile', 'all')
-                qtwidgets.make_overlay = p = cslmao.make_overlay(
+                app.make_overlay = p = cslmao.make_overlay(
                     profile)
                 cslmao.block_and_stream_process_output(
                     p, 'CSLMAO: ')
                 if p.returncode == 0:
-                    qtwidgets.make_overlay = None
-                    qtwidgets.run_overlay = p2 = cslmao.run_overlay(
+                    app.make_overlay = None
+                    app.run_overlay = p2 = cslmao.run_overlay(
                         profile)
                     cslmao.block_and_stream_process_output(
                         p2, 'CSLMAO: ')
                     if p2.returncode not in (None, 0, 1):
                         run_button_smart.setText('🚀 Run')
                         print('cslmao: Error: Run overlay failed.')
-                        qtwidgets.run_overlay = None
+                        app.run_overlay = None
                 else:
                     run_button_smart.setText('🚀 Run')
                     print('cslmao: Error: Make overlay failed.')
-                    qtwidgets.make_overlay = None
+                    app.make_overlay = None
             run_button_smart.setText('🚧 Stop')
             Thread(target=run_thrd, daemon=True).start()
         else:
-            if qtwidgets.make_overlay != None:
-                qtwidgets.make_overlay.kill()
-            if qtwidgets.run_overlay != None:
-                qtwidgets.run_overlay.kill()
+            if app.make_overlay != None:
+                app.make_overlay.kill()
+            if app.run_overlay != None:
+                app.run_overlay.kill()
             run_button_smart.setText('🚀 Run')
             print('cslmao: Status: Stopped running overlay, idling.')
-            qtwidgets.make_overlay = None
-            qtwidgets.run_overlay = None
+            app.make_overlay = None
+            app.run_overlay = None
     run_button.clicked.connect(run_mods)
     
     # new mod
@@ -867,28 +867,28 @@ def build_cslmao(widget: QWidget):
             print('clsmao: Stop running mods to proceed.')
             return
         # get view mods with search and profile
-        for mod_index in range(len(qtwidgets.view_mods)):
+        for mod_index in range(len(app.view_mods)):
             mod = cslmao.MOD.mods[mod_index]
             mod_widget = view_layout.mod_widgets[mod]
-            if qtwidgets.view_mods[mod_index]:
-                if qtwidgets.all_mod_enable:
+            if app.view_mods[mod_index]:
+                if app.all_mod_enable:
                     mod_widget.setObjectName('CslmaoModWidgetEnable')
-                    mod_widget.setStyleSheet(qtwidgets.mod_enable_stylesheet)
+                    mod_widget.setStyleSheet(app.mod_enable_stylesheet)
                     mod_widget.mod_info.setObjectName('CslmaoModWidgetEnable')
-                    mod_widget.mod_info.setStyleSheet(qtwidgets.mod_enable_stylesheet)
+                    mod_widget.mod_info.setStyleSheet(app.mod_enable_stylesheet)
                 else:
                     mod_widget.setObjectName('CslmaoModWidgetDisable')
-                    mod_widget.setStyleSheet(qtwidgets.mod_disable_stylesheet)
+                    mod_widget.setStyleSheet(app.mod_disable_stylesheet)
                     mod_widget.mod_info.setObjectName('CslmaoModWidgetDisable')
-                    mod_widget.mod_info.setStyleSheet(qtwidgets.mod_disable_stylesheet)
-                mod.enable = qtwidgets.all_mod_enable
+                    mod_widget.mod_info.setStyleSheet(app.mod_disable_stylesheet)
+                mod.enable = app.all_mod_enable
         cslmao.save_mods()
-        qtwidgets.all_mod_enable = not qtwidgets.all_mod_enable
+        app.all_mod_enable = not app.all_mod_enable
     all_button.clicked.connect(all_mods)
 
     # check overlay running
     def is_overlay_running():
-        if qtwidgets.make_overlay != None or qtwidgets.run_overlay != None:
+        if app.make_overlay != None or app.run_overlay != None:
             return True
         return False
     
@@ -1189,7 +1189,7 @@ def build_mask_viewer(widget: QWidget):
             return w
     weight_validate = WeightValidate()
     table.setItemDelegate(weight_validate)
-    qtwidgets.mask_viewer_bin_file = None
+    app.mask_viewer_bin_file = None
 
     # action button
     layout2 = QHBoxLayout()
@@ -1247,7 +1247,7 @@ def build_mask_viewer(widget: QWidget):
         skl_file = pyRitoFile.skl.SKL().read(skl_line.text())
         joint_names = [f'[{joint_id}] {joint.name}' for joint_id, joint in enumerate(skl_file.joints)]
         hash_helper.Storage.free_bin_hashes()
-        qtwidgets.mask_viewer_bin_file = bin_file = pyRitoFile.bin.BIN().read(anm_bin_line.text())
+        app.mask_viewer_bin_file = bin_file = pyRitoFile.bin.BIN().read(anm_bin_line.text())
         mask_data = mask_viewer.get_weights(bin_file)
         mask_names, weights = list(mask_data.keys()), list(mask_data.values())
         table.setRowCount(len(joint_names))
@@ -1278,12 +1278,12 @@ def build_mask_viewer(widget: QWidget):
                 mask_name = table.horizontalHeaderItem(j).text()
                 weights = [float(table.item(i, j).text()) for i in range(table.rowCount())]
                 mask_data[mask_name] = weights
-            mask_viewer.set_weights(qtwidgets.mask_viewer_bin_file, mask_data)
-            qtwidgets.mask_viewer_bin_file.write(final_path)
+            mask_viewer.set_weights(app.mask_viewer_bin_file, mask_data)
+            app.mask_viewer_bin_file.write(final_path)
             print(f'mask_viewer: Finish: Save table: {final_path}')
 
     def clear_table(table: QTableWidget):
-        qtwidgets.mask_viewer_bin_file = None
+        app.mask_viewer_bin_file = None
         table.clear()
         table.setRowCount(0)
         table.setColumnCount(0)
@@ -1405,8 +1405,8 @@ Hover mouse on button to see functions description.
 def build_no_skin(widget: QWidget):
     layout = QHBoxLayout()
     tab_widget = QTabWidget()
-    tab_widget.setStyleSheet(qtwidgets.tab_stylesheet)
-    qtwidgets.tab_widgets.append(tab_widget)
+    tab_widget.setStyleSheet(app.tab_stylesheet)
+    app.tab_widgets.append(tab_widget)
     
     # no skin full
     tab1 = QWidget()
@@ -1692,7 +1692,7 @@ def build_bumpath(widget: QWidget):
     layout.addLayout(layout7, stretch=1)
 
     # init
-    qtwidgets.bum = bum = bumpath.Bum()
+    app.bum = bum = bumpath.Bum()
 
     # add source dir
     def select_source_dir():
@@ -1811,7 +1811,7 @@ def build_bumpath(widget: QWidget):
 
     # reset
     def reset_cmd():
-        qtwidgets.bum.reset()
+        app.bum.reset()
         for dir_layout_widget in dir_layout.widgets:
             dir_layout_widget.setParent(None)
         dir_layout.widgets = []
@@ -1871,8 +1871,8 @@ def build_bumpath(widget: QWidget):
 def build_wad_tool(widget: QWidget):
     layout = QVBoxLayout()
 
-    qtwidgets.text_wad_paths = []
-    qtwidgets.text_chunk_hashes = []
+    app.text_wad_paths = []
+    app.text_chunk_hashes = []
     # pack, unpack wad
     layout2 = QHBoxLayout()
     button = QToolButton()
@@ -2001,24 +2001,24 @@ def build_wad_tool(widget: QWidget):
                 hash_helper.Storage.read_wad_hashes()
                 for wad_path in final_paths:
                     try:
-                        if wad_path not in qtwidgets.text_wad_paths:
+                        if wad_path not in app.text_wad_paths:
                             wad = pyRitoFile.wad.WAD().read(wad_path)
                             wad.un_hash(hash_helper.Storage.hashtables)
-                            qtwidgets.text_wad_paths.append(wad_path)
-                            qtwidgets.text_chunk_hashes.extend(chunk.hash for chunk in wad.chunks)
+                            app.text_wad_paths.append(wad_path)
+                            app.text_chunk_hashes.extend(chunk.hash for chunk in wad.chunks)
                     except:
                         pass
                 hash_helper.Storage.free_wad_hashes()
                 print('wad_tool: Finish: Load WADs.')
-                wadchunk_text.setPlainText('\n'.join(qtwidgets.text_wad_paths), '\n'.join(qtwidgets.text_chunk_hashes))
+                wadchunk_text.setPlainText('\n'.join(app.text_wad_paths), '\n'.join(app.text_chunk_hashes))
 
             helper.SafeThread.start('wad_tool', wad_thrd)
     add_button.clicked.connect(lambda event: add_wads(True))
     scan_button.clicked.connect(lambda event: add_wads(False))
     # clear wads
     def clear_wads():
-        qtwidgets.text_wad_paths = []
-        qtwidgets.text_chunk_hashes = []
+        app.text_wad_paths = []
+        app.text_chunk_hashes = []
         wad_text.clear()
         chunk_text.clear()
         print('wad_tool: Finish: Clear WADs.')
@@ -2027,7 +2027,7 @@ def build_wad_tool(widget: QWidget):
     def filter_chunk(keywords):
         new_text_chunk_hashesh = []
         keywords = keywords.split(' ')
-        for chunk_hash in qtwidgets.text_chunk_hashes:
+        for chunk_hash in app.text_chunk_hashes:
             for word in keywords:
                 if word in chunk_hash:
                     new_text_chunk_hashesh.append(chunk_hash)
@@ -2042,13 +2042,13 @@ def build_wad_tool(widget: QWidget):
             
             es = QTextEdit.ExtraSelection()
             es.cursor = text_cursor
-            es.format.setForeground(qtwidgets.accent_brush)
+            es.format.setForeground(app.accent_brush)
             ess.append(es)
             while not text_cursor.isNull():
                 text_cursor = chunk_doc.find(word, text_cursor.selectionEnd())
                 es = QTextEdit.ExtraSelection()
                 es.cursor = text_cursor
-                es.format.setForeground(qtwidgets.accent_brush)
+                es.format.setForeground(app.accent_brush)
                 ess.append(es)
         chunk_text.setExtraSelections(ess)
     filter_line.returnPressed.connect(lambda: filter_chunk(filter_line.text()))
@@ -2260,8 +2260,8 @@ New custom joints will have weight set to 0.0.
 def build_lemon3d(widget: QWidget):
     layout = QHBoxLayout()
     tab_widget = QTabWidget()
-    tab_widget.setStyleSheet(qtwidgets.tab_stylesheet)
-    qtwidgets.tab_widgets.append(tab_widget)
+    tab_widget.setStyleSheet(app.tab_stylesheet)
+    app.tab_widgets.append(tab_widget)
 
     # fbx
     tab1 = QWidget()
@@ -2613,7 +2613,7 @@ def build_bnk_tool(widget: QWidget):
     
     layout2 = QHBoxLayout()
     # treeview
-    qtwidgets.inspector = None
+    app.inspector = None
     treeview = QTreeView()
     treeview.setHeaderHidden(True)
     model = QStandardItemModel()
@@ -2641,13 +2641,13 @@ def build_bnk_tool(widget: QWidget):
             
         # clear cache
         model.clear()
-        if qtwidgets.inspector != None:
-            qtwidgets.inspector.stop()
-            qtwidgets.inspector.port.terminate()
+        if app.inspector != None:
+            app.inspector.stop()
+            app.inspector.port.terminate()
         bnk_tool.Inspector.reset_cache()
         reset_autoplay_values()
         # inspect
-        qtwidgets.inspector = inspector = bnk_tool.Inspector(
+        app.inspector = inspector = bnk_tool.Inspector(
             audio_path=audio_line.text(),
             events_path=event_line.text(),
             bin_path=bin_line.text(),
@@ -2702,11 +2702,11 @@ def build_bnk_tool(widget: QWidget):
             return
     
         model.clear()
-        if qtwidgets.inspector != None:
-            qtwidgets.inspector.stop()
-            qtwidgets.inspector.port.terminate()
+        if app.inspector != None:
+            app.inspector.stop()
+            app.inspector.port.terminate()
         bnk_tool.Inspector.reset_cache()
-        qtwidgets.inspector = None
+        app.inspector = None
         reset_autoplay_values()
     button.clicked.connect(clear_bnk)
     layout3.addWidget(button)
@@ -2715,11 +2715,11 @@ def build_bnk_tool(widget: QWidget):
     button.setText('💾 Save as')
     button.setMinimumWidth(230)
     def save_as():
-        if qtwidgets.inspector == None:
+        if app.inspector == None:
             return
         dialog = QFileDialog()
         final_path = ''
-        if qtwidgets.inspector.is_bnk:
+        if app.inspector.is_bnk:
             filepath = dialog.getSaveFileName(
                 widget, 
                 'Save Audio BNK as',
@@ -2739,7 +2739,7 @@ def build_bnk_tool(widget: QWidget):
                 final_path = filepath[0]
         if final_path != '':
             def save_thrd():
-                qtwidgets.inspector.pack(final_path)
+                app.inspector.pack(final_path)
                 print(f'bnk_tool: Finish: Save Audio: {final_path}')
 
             helper.SafeThread.start('bnk_tool', save_thrd)
@@ -2750,7 +2750,7 @@ def build_bnk_tool(widget: QWidget):
     button.setText('📤 Extract all sound')
     button.setMinimumWidth(230)
     def extract_bnk():
-        if qtwidgets.inspector == None:
+        if app.inspector == None:
             return
         dialog = QFileDialog()
         dirpath = dialog.getExistingDirectory(
@@ -2760,7 +2760,7 @@ def build_bnk_tool(widget: QWidget):
         )
         if dirpath != '':
             def extract_thrd():
-                qtwidgets.inspector.extract(dirpath)
+                app.inspector.extract(dirpath)
                 print(f'bnk_tool: Finish: Extract all sounds: {dirpath}')
             
             helper.SafeThread.start('bnk_tool', extract_thrd)
@@ -2771,7 +2771,7 @@ def build_bnk_tool(widget: QWidget):
     button.setText('🎶 Replace sound')
     button.setMinimumWidth(230)
     def replace_sound():
-        if qtwidgets.inspector == None:
+        if app.inspector == None:
             return
         unique_select_wem_ids = []
         select_model = treeview.selectionModel()
@@ -2800,7 +2800,7 @@ def build_bnk_tool(widget: QWidget):
                     wem_path_count = len(final_paths)
                     for wem_id in unique_select_wem_ids:
                         wem_id = int(wem_id)
-                        qtwidgets.inspector.replace_wem(wem_id, final_paths[wem_path_id])
+                        app.inspector.replace_wem(wem_id, final_paths[wem_path_id])
                         wem_path_id += 1
                         if wem_path_id == wem_path_count:
                             wem_path_id = 0
@@ -2813,7 +2813,7 @@ def build_bnk_tool(widget: QWidget):
     button.setText('▶️ Play selected')
     button.setMinimumWidth(230)
     def play_selected():
-        if qtwidgets.inspector == None:
+        if app.inspector == None:
             return
         select_model = treeview.selectionModel()
         if select_model != None:
@@ -2822,7 +2822,7 @@ def build_bnk_tool(widget: QWidget):
                 text = select_index[-1].data()
                 if text.startswith('🎵'):
                     wem_id = text[2:]
-                    play_thrd = lambda: qtwidgets.inspector.play(wem_id, setting.get('bnk_tool.stop_previous', True))
+                    play_thrd = lambda: app.inspector.play(wem_id, setting.get('bnk_tool.stop_previous', True))
                     helper.SafeThread.start(f'bnk_tool.play_{wem_id}_{time.time()}', play_thrd)
         treeview.selectionModel().selectedIndexes()[-1].data
     button.clicked.connect(play_selected)
@@ -2832,9 +2832,9 @@ def build_bnk_tool(widget: QWidget):
     button.setText('⏹️ Stop playing')
     button.setMinimumWidth(230)
     def stop_playing():
-        if qtwidgets.inspector == None:
+        if app.inspector == None:
             return
-        qtwidgets.inspector.stop()
+        app.inspector.stop()
     button.clicked.connect(stop_playing)
     layout3.addWidget(button)
 
@@ -2844,25 +2844,25 @@ def build_bnk_tool(widget: QWidget):
     # if after 1 sec delay of selecting, nothing new selected, play the sound
     # this is very complicated so we need a whole background thread for autoplay
     def reset_autoplay_values():
-        qtwidgets.selected_wem_id = None
-        qtwidgets.is_selecting = False
-        qtwidgets.select_cd = 0.0
+        app.selected_wem_id = None
+        app.is_selecting = False
+        app.select_cd = 0.0
     # autoplay thread  
     def autoplay_thread():
         fixed_delta_time = 0.0166
         while setting.get('bnk_tool.auto_play', True):
-            if qtwidgets.inspector != None:
-                if qtwidgets.is_selecting:
-                    if qtwidgets.select_cd >= 0.0:
-                        qtwidgets.select_cd -= fixed_delta_time
-                    if qtwidgets.select_cd < 0.0:
-                        if qtwidgets.selected_wem_id != None:
+            if app.inspector != None:
+                if app.is_selecting:
+                    if app.select_cd >= 0.0:
+                        app.select_cd -= fixed_delta_time
+                    if app.select_cd < 0.0:
+                        if app.selected_wem_id != None:
                             helper.SafeThread.start(
-                                f'{qtwidgets.selected_wem_id}{qtwidgets.select_cd}{time.time}',
-                                lambda: qtwidgets.inspector.play(qtwidgets.selected_wem_id, setting.get('bnk_tool.stop_previous', True))
+                                f'{app.selected_wem_id}{app.select_cd}{time.time}',
+                                lambda: app.inspector.play(app.selected_wem_id, setting.get('bnk_tool.stop_previous', True))
                             )
-                        qtwidgets.select_cd = 0.0
-                        qtwidgets.is_selecting = False
+                        app.select_cd = 0.0
+                        app.is_selecting = False
             time.sleep(fixed_delta_time)
     # autoplay checkbox
     auto_playcheckbox = QCheckBox()
@@ -2878,15 +2878,15 @@ def build_bnk_tool(widget: QWidget):
     layout3.addWidget(auto_playcheckbox)
     # autoplay select cmd
     def autoplay_select_cmd(current, previous):
-        if qtwidgets.inspector == None:
+        if app.inspector == None:
             return
         if setting.get('bnk_tool.auto_play', True) :
             text = current.data()
             if text != None and text.startswith('🎵'): 
                 wem_id = text[2:]
-                qtwidgets.is_selecting = True
-                qtwidgets.select_cd = 0.25
-                qtwidgets.selected_wem_id = wem_id
+                app.is_selecting = True
+                app.select_cd = 0.25
+                app.selected_wem_id = wem_id
     treeview.selectionModel().currentChanged.connect(autoplay_select_cmd)
     # start the autoplay event
     reset_autoplay_values()
@@ -2911,8 +2911,8 @@ def build_bnk_tool(widget: QWidget):
     volume_slider.setValue(int(setting.get('bnk_tool.volume', 0.5)*100))
     def volume_changed(value):
         volume_factor = float(value / 100)
-        if qtwidgets.inspector != None:
-            qtwidgets.inspector.volume = volume_factor
+        if app.inspector != None:
+            app.inspector.volume = volume_factor
         setting.set('bnk_tool.volume', volume_factor)
         setting.save()
     volume_slider.valueChanged.connect(volume_changed)
@@ -3047,11 +3047,11 @@ def build_winLT(widget: QWidget):
     layout2 = QHBoxLayout()
     desktop_button = QToolButton()
     desktop_button.setText('🖥️ Create desktop shortcut')
-    desktop_button.clicked.connect(lambda: winLT.Shortcut.create_desktop(qtwidgets.theme_paths['appicon']))
+    desktop_button.clicked.connect(lambda: winLT.create_desktop(app.theme_paths['appicon']))
     layout2.addWidget(desktop_button)
     launch_button = QToolButton()
     launch_button.setText('🚀 Create launch shortcut')
-    launch_button.clicked.connect(lambda: winLT.Shortcut.create_launch(qtwidgets.theme_paths['appicon']))
+    launch_button.clicked.connect(lambda: winLT.create_launch(app.theme_paths['appicon']))
     layout2.addWidget(launch_button)
     layout2.addStretch()
     layout.addLayout(layout2)
@@ -3061,23 +3061,23 @@ def build_winLT(widget: QWidget):
     # contexts
     # treewidget
     def set_context_data(shell_id, command_id, value):
-        winLT.Context.submenus[shell_id][command_id] = value
+        winLT.submenus[shell_id][command_id] = value
         setting.set(f'winLT.{shell_id}.{command_id}', value)
         setting.save()
     layout2 = QHBoxLayout()
     treewidget = QTreeWidget()
     treewidget.setHeaderHidden(True)
     treewidget.setSelectionMode(treewidget.SelectionMode.SingleSelection)
-    for shell_id in winLT.Context.submenus:
+    for shell_id in winLT.submenus:
         shell_item = QTreeWidgetItem(treewidget)
         shell_item.setText(0, f'💬 {shell_id}')
-        for command_id in winLT.Context.submenus[shell_id]:
+        for command_id in winLT.submenus[shell_id]:
             command_item = QTreeWidgetItem(shell_item)
             command_item.setText(0, '')
-            checkbox = QCheckBox(f'🔧 {winLT.Context.commands[command_id]["desc"]}')
+            checkbox = QCheckBox(f'🔧 {winLT.commands[command_id]["desc"]}')
             checkbox_value = setting.get(f'winLT.{shell_id}.{command_id}', True)
             checkbox.setChecked(checkbox_value)
-            winLT.Context.submenus[shell_id][command_id] = checkbox_value
+            winLT.submenus[shell_id][command_id] = checkbox_value
             checkbox.clicked.connect(lambda value, shell_id=shell_id, command_id=command_id: set_context_data(shell_id, command_id, value))
             treewidget.setItemWidget(command_item, 0, checkbox)
     treewidget.expandAll()
@@ -3088,11 +3088,11 @@ def build_winLT(widget: QWidget):
     layout2 = QHBoxLayout()
     set_button = QToolButton()
     set_button.setText('💬 Set explorer context')
-    set_button.clicked.connect(lambda: winLT.Context.create_contexts(qtwidgets.theme_paths['appicon']))
+    set_button.clicked.connect(lambda: winLT.create_contexts(app.theme_paths['appicon']))
     layout2.addWidget(set_button)
     remove_button = QToolButton()
     remove_button.setText('❌ Remove explorer context')
-    remove_button.clicked.connect(winLT.Context.remove_contexts)
+    remove_button.clicked.connect(winLT.remove_contexts)
     layout2.addWidget(remove_button)
     layout2.addStretch()
     layout.addLayout(layout2)
@@ -3105,8 +3105,8 @@ def build_infinityQT(widget: QWidget):
 
     # main tab widget
     tab_widget = QTabWidget()
-    tab_widget.setStyleSheet(qtwidgets.tab_stylesheet)
-    qtwidgets.tab_widgets.append(tab_widget)
+    tab_widget.setStyleSheet(app.tab_stylesheet)
+    app.tab_widgets.append(tab_widget)
     tab_widget.setTabsClosable(True)
     layout.addWidget(tab_widget)
     
@@ -3128,7 +3128,7 @@ def build_infinityQT(widget: QWidget):
 
 def build_logbox(widget: QWidget):
     layout = QVBoxLayout()
-    qtwidgets.logbox = logbox = QPlainTextEdit()
+    app.logbox = logbox = QPlainTextEdit()
     logbox.setReadOnly(True)
     logbox.setMaximumBlockCount(1000)
     layout.addWidget(logbox, stretch=1)
@@ -3136,7 +3136,7 @@ def build_logbox(widget: QWidget):
 
 def build_changelog(widget: QWidget):
     layout = QVBoxLayout()
-    qtwidgets.changelog = changelog = QPlainTextEdit()
+    app.changelog = changelog = QPlainTextEdit()
     changelog.setReadOnly(True)
     layout.addWidget(changelog, stretch=1)
     widget.setLayout(layout)
@@ -3154,25 +3154,25 @@ def build_setting(widget: QWidget):
     def change_theme():
         # init theme
         theme_name = theme_box.currentText()
-        qtwidgets.theme_paths = qtwidgets.init_theme(theme_name)
+        app.init_theme(theme_name)
         # apply theme
-        qtwidgets.main_window.setStyleSheet(qtwidgets.window_stylesheet)
-        for tab_widget in qtwidgets.tab_widgets:
-            tab_widget.setStyleSheet(qtwidgets.tab_stylesheet)
-        qtwidgets.icon_label.setPixmap(QPixmap(qtwidgets.theme_paths['titlebaricon']).scaled(118, 40, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        app.main.setStyleSheet(app.window_stylesheet)
+        for tab_widget in app.tab_widgets:
+            tab_widget.setStyleSheet(app.tab_stylesheet)
+        app.icon_label.setPixmap(QPixmap(app.theme_paths['titlebaricon']).scaled(118, 40, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.SmoothTransformation))
         # set background gif
         if setting.get('qtGUI.animated_background', True):
-            qtwidgets.background_widget.setMovie(QMovie(qtwidgets.theme_paths['background']))
-            qtwidgets.background_widget.setScaledContents(True)
-            qtwidgets.background_widget.movie().start()
+            app.background_widget.setMovie(QMovie(app.theme_paths['background']))
+            app.background_widget.setScaledContents(True)
+            app.background_widget.movie().start()
         else:
-            qtwidgets.background_widget.setPixmap(QPixmap(qtwidgets.theme_paths['background']))
-            qtwidgets.background_widget.setScaledContents(True)
+            app.background_widget.setPixmap(QPixmap(app.theme_paths['background']))
+            app.background_widget.setScaledContents(True)
         # update icon
-        qtwidgets.main_window.setWindowIcon(QPixmap(qtwidgets.theme_paths['appicon']))
-        qtwidgets.tray_icon.setIcon(QPixmap(qtwidgets.theme_paths['appicon']))
+        app.main.setWindowIcon(QPixmap(app.theme_paths['appicon']))
+        app.tray_icon.setIcon(QPixmap(app.theme_paths['appicon']))
         # update shortcut
-        winLT.Shortcut.update_shortcuts(qtwidgets.theme_paths['appicon'])
+        winLT.update_shortcuts(app.theme_paths['appicon'])
         # save theme
         setting.set('qtGUI.theme_name', theme_name)
         setting.save()
@@ -3186,12 +3186,12 @@ def build_setting(widget: QWidget):
         setting.set('qtGUI.animated_background', checkbox.isChecked())
         setting.save()
         if setting.get('qtGUI.animated_background', True):
-            qtwidgets.background_widget.setMovie(QMovie(qtwidgets.theme_paths['background']))
-            qtwidgets.background_widget.setScaledContents(True)
-            qtwidgets.background_widget.movie().start()
+            app.background_widget.setMovie(QMovie(app.theme_paths['background']))
+            app.background_widget.setScaledContents(True)
+            app.background_widget.movie().start()
         else:
-            qtwidgets.background_widget.setPixmap(QPixmap(qtwidgets.theme_paths['background']))
-            qtwidgets.background_widget.setScaledContents(True)
+            app.background_widget.setPixmap(QPixmap(app.theme_paths['background']))
+            app.background_widget.setScaledContents(True)
     checkbox.clicked.connect(animated_background_cmd)
     layout2.addWidget(checkbox)
 
@@ -3209,14 +3209,14 @@ def build_setting(widget: QWidget):
             setting.get('qtGUI.default_folder', ''),
         )
         if dirpath == '':
-            qtwidgets.default_dir_label.setText('Default path for all file/dir dialog.')
+            app.default_dir_label.setText('Default path for all file/dir dialog.')
         else:
-            qtwidgets.default_dir_label.setText(dirpath)
+            app.default_dir_label.setText(dirpath)
         setting.set('qtGUI.default_folder', dirpath)
         setting.save()
     button.clicked.connect(default_dir_cmd)
     layout2.addWidget(button)
-    qtwidgets.default_dir_label = label = QLabel(setting.get('qtGUI.default_folder', 'Default path for all file/dir dialog.'))
+    app.default_dir_label = label = QLabel(setting.get('qtGUI.default_folder', 'Default path for all file/dir dialog.'))
     label.setStyleSheet('background-color: transparent')
     layout2.addWidget(label)
     layout2.addStretch()
@@ -3228,7 +3228,7 @@ def build_setting(widget: QWidget):
     def restart_cmd():
         print(f'Start: Restart LtMAO')
         os.system(lepath.join(lepath.abs(os.path.curdir),'start.bat'))
-        qtwidgets.app.quit()
+        app.app.quit()
         
     button.clicked.connect(restart_cmd)
     layout2.addWidget(button)

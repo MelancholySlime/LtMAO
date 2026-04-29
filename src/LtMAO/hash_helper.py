@@ -2,7 +2,7 @@ try:
     import requests
 except: 
     print('Warning: hash_helper failed to import requests.')
-import os, os.path, json, traceback, threading
+import os, json, traceback, threading
 from . import lepath, pyRitoFile, setting
 
 def get_hash_separator(filename):
@@ -63,7 +63,7 @@ class CDTBHashes:
         total_size = 0
         for root, dirs, files in os.walk(CDTBHashes.local_dir):
             for file in files:
-                total_size += os.path.getsize(lepath.join(root, file))
+                total_size += lepath.getsize(lepath.join(root, file))
         return to_human(total_size)
 
     etag_path = f'{local_dir}/etag.json'
@@ -81,7 +81,7 @@ class CDTBHashes:
                 # get etag and compare, new etag = sync
                 etag_local = CDTBHashes.ETAG.get(filename, None)
                 etag_remote = get.headers['ETag']
-                if etag_local == None or etag_local != etag_remote or not os.path.exists(local_file):
+                if etag_local == None or etag_local != etag_remote or not lepath.exists(local_file):
                     # set etag
                     CDTBHashes.ETAG[filename] = etag_remote
                     # download file
@@ -121,7 +121,7 @@ class CDTBHashes:
     def sync_all():
         # read etags
         CDTBHashes.ETAG = {}
-        if os.path.exists(CDTBHashes.etag_path):
+        if lepath.exists(CDTBHashes.etag_path):
             with open(CDTBHashes.etag_path, 'r', encoding='utf-8') as f:
                 CDTBHashes.ETAG = json.load(f)
         CDTBHashes.sync_hashes(*ALL_HASHES)
@@ -142,14 +142,14 @@ class ExtractedHashes:
         total_size = 0
         for root, dirs, files in os.walk(ExtractedHashes.local_dir):
             for file in files:
-                total_size += os.path.getsize(lepath.join(root, file))
+                total_size += lepath.getsize(lepath.join(root, file))
         return to_human(total_size)
     
     @staticmethod
     def clear_extract_hashes(*filenames):
         for filename in filenames:
             eh_file = ExtractedHashes.local_file(filename)
-            if os.path.exists(eh_file):
+            if lepath.exists(eh_file):
                 os.remove(lepath.abs(eh_file))
         print('hash_helper: Finish: Clear Extract Hashes.')
     
@@ -296,7 +296,7 @@ class ExtractedHashes:
             local_file = ExtractedHashes.local_file(filename)
             sep = get_hash_separator(filename)
             # read existed extracted hashes
-            if os.path.exists(local_file):
+            if lepath.exists(local_file):
                 with open(local_file, 'r', encoding='utf-8') as f:
                     for line in f:
                         hashtable[line[:sep]] = line[sep+1:-1]
@@ -324,7 +324,7 @@ class CustomHashes:
         total_size = 0
         for root, dirs, files in os.walk(CustomHashes.local_dir):
             for file in files:
-                total_size += os.path.getsize(lepath.join(root, file))
+                total_size += lepath.getsize(lepath.join(root, file))
         return to_human(total_size)
 
     @staticmethod
@@ -332,7 +332,7 @@ class CustomHashes:
         for filename in filenames:
             local_file = CustomHashes.local_file(filename)
             # safe check
-            if os.path.exists(local_file):
+            if lepath.exists(local_file):
                 # read hashes
                 with open(local_file, 'r', encoding='utf-8') as f:
                     sep = get_hash_separator(filename)
@@ -390,17 +390,17 @@ class CustomHashes:
             ch_file = CustomHashes.local_file(filename)
             sep = get_hash_separator(filename)
             # read cdtb hashes
-            if os.path.exists(cdtb_file):
+            if lepath.exists(cdtb_file):
                 with open(cdtb_file, 'r', encoding='utf-8') as f:
                     for line in f:
                         hashtable[line[:sep]] = line[sep+1:-1]
             # read extracted hashes
-            if os.path.exists(ex_file):
+            if lepath.exists(ex_file):
                 with open(ex_file, 'r', encoding='utf-8') as f:
                     for line in f:
                         hashtable[line[:sep]] = line[sep+1:-1]
             # read existed custom hashes
-            if os.path.exists(ch_file):
+            if lepath.exists(ch_file):
                 with open(ch_file, 'r', encoding='utf-8') as f:
                     for line in f:
                         hashtable[line[:sep]] = line[sep+1:-1]

@@ -272,15 +272,15 @@ class BankHelper:
             for container_id in bank_event.containers:
                 bank_container = bank_event.containers[container_id]
                 # sort wems inside container
-                bank_container.wems = dict(natsort(bank_container.wems.items()))
+                bank_container.wems = dict(natsort(list(bank_container.wems.items()), key=lambda x: x[0]))
             # sort containers inside event
-            bank_event.containers = dict(natsort(bank_event.containers.items()))
+            bank_event.containers = dict(natsort(list(bank_event.containers.items()), key= lambda x: x[0]))
             # sort wems inside event
-            bank_event.wems = dict(natsort(bank_event.wems.items()))
+            bank_event.wems = dict(natsort(list(bank_event.wems.items()), key=lambda x: x[0]))
         # sort events inside tree
-        bank_tree.events = dict(natsort(bank_tree.events.items()))
+        bank_tree.events = dict(natsort(list(bank_tree.events.items()), key=lambda x: x[0]))
         # sort wems inside tree
-        bank_tree.wems = dict(natsort(bank_tree.wems.items()))
+        bank_tree.wems = dict(natsort(list(bank_tree.wems.items()), key=lambda x: x[0]))
 
 class Inspector:
     cache_dir = './pref/bnk_tool'
